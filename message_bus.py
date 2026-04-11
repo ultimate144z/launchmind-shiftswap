@@ -47,6 +47,7 @@ class MessageBus:
         )
         self._topics[to_agent].append(message)
         self._all_messages.append(message)
+        print(f"📠 [MessageBus] {from_agent} -> {to_agent} (type={message_type})", flush=True)
         return message
 
     def receive_messages(self, agent_name: str) -> List[AgentMessage]:
