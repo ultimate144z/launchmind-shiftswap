@@ -1,0 +1,33 @@
+Hello everyone! This is the demo video for LaunchMind ShiftSwap, our fully autonomous Multi-Agent Startup System.
+
+Our startup idea is "ShiftSwap": a platform connecting hourly workers who need to swap shifts quickly and fairly, ensuring manager approval and policy compliance.
+
+Our system uses a graph-based orchestration containing 5 unique agents:
+1. The CEO Agent (Orchestrator)
+2. The Product Agent
+3. The Engineer Agent
+4. The Marketing Agent
+5. The QA Reviewer Agent
+
+Today, we're going to see them autonomously define this product, build an HTML landing page, push it to our GitHub repository, announce it on our team Slack, and send a cold outreach email. All agents communicate synchronously using structured JSON over an in-memory Message Bus.
+
+Before we hit run, I want to quickly highlight the Bonus Features we successfully built into our framework:
+- First, we successfully implemented the QA Reviewer Agent, giving us a dynamic, LLM-driven feedback loop.
+- Second, we built full Graceful Failure Handling so our Engineer and Marketing agents retry API operations upon transient errors rather than crashing the pipeline.
+- And third, the CEO agent is capable of running multiple revision cycles dynamically based on the QA report!
+
+Let's start the system!
+
+[ ACTION: Run `python main.py` in the terminal ]
+
+1. First, you'll see the CEO agent decompose our startup idea and orchestrate tasks specifically for Product, Engineering, and Marketing.
+2. Now, the Product Agent accepts the CEO's task to build our personas and value proposition into a JSON specification...
+3. Using that spec, the Engineer Agent is scaffolding an HTML Landing page and automatically pushing it to GitHub. Let's verify on GitHub!
+[ ACTION: Switch to GitHub browser tab. Refresh the Pull Requests page and open the new PR ]
+4. Meanwhile, the Marketing Agent has generated a tagline, an email body, and a Slack Block Kit message. Let's look at the outputs!
+[ ACTION: Open your email inbox to show the Brevo email, then open Slack to show the #launches channel with the Marketing post ]
+5. Back in the backend, we have our QA Agent reviewing both the HTML implementation and the Marketing copy. If it detects any disconnect from the Product Spec, it returns a "fail" verdict, causing the CEO to request a revision (up to 3 times) before allowing the pipeline to proceed!
+6. Finally, once QA passes, our CEO generates a final launch announcement compiling everything accomplished and drops it natively into Slack.
+[ ACTION: Show Slack #launches channel with the final CEO summary message ]
+
+As you can see, our Multi-Agent System completely mapped the problem and built out a prototype from scratch entirely autonomously. Thank you!

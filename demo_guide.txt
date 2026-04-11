@@ -1,0 +1,52 @@
+# DEMO VIDEO PREPARATION AND EXECUTION GUIDE
+
+Before you start recording, make sure your environment is fully set up. The grading rubric practically guarantees a 100% ONLY IF you follow these steps and capture all real-world actions in one uncut video.
+
+## PRE-RECORDING CHECKLIST:
+1. Web Browser Tabs (Open these side-by-side or ready to be swapped to!):
+   - GitHub Pull Requests Tab: https://github.com/ultimate144z/Launchmind-Shiftswap/pulls
+   - Email Inbox: Have the exact email inbox opened (the one defined in `.env` as `TEST_EMAIL`).
+   - Slack Desktop or Web App: Open your Slack workspace and go to the `#launches` channel.
+
+2. Code Environment Setup:
+   - Make sure your terminal is opened to `g:\22i_0458_Launchmind_Shiftswap\launchmind-shiftswap`
+   - Make sure your Python virtual environment is activated (if applicable).
+   - Clear your terminal display by typing `cls` so it looks clean before starting.
+
+----------------------------------------------------------------------
+
+## HOW TO RECORD THE VIDEO:
+
+[ START RECORDING YOUR SCREEN ]
+
+**Step 1: Introduction (Camera/Mic)**
+Read the top half of `demo_script.txt` out loud. You can show your VS Code workspace or README while talking.
+Be sure to explicitly mention the "Bonus Features", as it guarantees extra points.
+
+**Step 2: Start the System**
+In your VS Code terminal, type and enter:
+> python main.py
+
+**Step 3: Narrate the Terminal Execution (Real-Time)**
+The terminal will start printing output. As it prints, follow the timing of `demo_script.txt`:
+* DO NOT speed up or cut the video. 
+* Point out when the CEO agent breaks down the tasks.
+* Point out the Message Bus passing JSON payloads between Agents.
+
+**Step 4: Show the GitHub PR Opening (CRITICAL)**
+When the terminal prints `[Engineer] PR opened...`
+> ACTION: Switch to your GitHub Browser Tab.
+> Refresh the Pull Requests page. 
+> Click into the newly created PR by the "EngineerAgent". Ensure evaluating teachers can see the code and the PR body on the recording!
+
+**Step 5: Show the Slack + Email Automations (CRITICAL)**
+When the terminal prints that Marketing has posted to Slack and sent an email:
+> ACTION: Switch to your Email Inbox tab. Open the cold outreach email.
+> ACTION: Switch to your Slack window. Point out the "Block Kit" message from the Marketing Agent.
+
+**Step 6: Show the Final CEO Decision & Conclusion**
+The terminal will eventually finish printing out the structured message history tree.
+> ACTION: Hop back to Slack one last time. Highlight the very final summary message that the "CEO" dropped as a sign-off.
+> Read the final sign-off line from `demo_script.txt` to conclude.
+
+[ END RECORDING YOUR SCREEN ]

@@ -4,7 +4,6 @@ import operator
 from typing import Annotated, TypedDict
 
 from langgraph.graph import END, START, StateGraph
-from langgraph.types import Send
 
 from agents import ceo_agent, engineer_agent, marketing_agent, product_agent, qa_agent
 from message_bus import MessageBus
@@ -63,14 +62,24 @@ def product_node(state: PipelineState, bus: MessageBus) -> dict:
 
 def engineer_node(state: PipelineState, bus: MessageBus) -> dict:
     result = engineer_agent.run(bus, state.get("product_spec", {}))
+
+    if isinstance(result, dict):
+        artifacts = result.get("engineer_artifacts", result)
+    else:
+        artifacts = {}
+
     return {
-        "engineer_artifacts": result if isinstance(result, dict) else {},
+        "engineer_artifacts": artifacts,
         "message_log": _collect_new_messages(state, bus),
     }
 
 
 def marketing_node(state: PipelineState, bus: MessageBus) -> dict:
-    result = marketing_agent.run(bus, state.get("product_spec", {}))
+    # Pass product_spec and PR URL so marketing can include it in Slack post
+    context = dict(state.get("product_spec", {}))
+    context["pr_url"] = state.get("engineer_artifacts", {}).get("pr_url", "")
+    context["startup_idea"] = state.get("startup_idea", "")
+    result = marketing_agent.run(bus, context)
     return {
         "marketing_artifacts": result if isinstance(result, dict) else {},
         "message_log": _collect_new_messages(state, bus),
@@ -114,11 +123,13 @@ def ceo_review_node(state: PipelineState, bus: MessageBus) -> dict:
     }
 
 
-def _fan_out_after_product(state: PipelineState) -> list[Send]:
-    return [
-        Send("engineer_node", state),
-        Send("marketing_node", state),
-    ]
+
+
+def ceo_final_summary_node(state: PipelineState, bus: MessageBus) -> dict:
+    result = ceo_agent.post_final_summary(state, bus)
+    return {
+        "message_log": _collect_new_messages(state, bus),
+    }
 
 
 def _next_step_after_ceo_review(state: PipelineState) -> str:
@@ -126,7 +137,7 @@ def _next_step_after_ceo_review(state: PipelineState) -> str:
     verdict = str(qa_report.get("verdict", "pass")).lower()
 
     if verdict == "pass" or state.get("revision_count", 0) >= 3:
-        return "end"
+        return "ceo_final_summary"
 
     responsible = str(qa_report.get("agent_responsible", "")).lower()
     if responsible == "engineer":
@@ -134,7 +145,7 @@ def _next_step_after_ceo_review(state: PipelineState) -> str:
     if responsible == "marketing":
         return "marketing_node"
 
-    return "end"
+    return "ceo_final_summary"
 
 
 def build_graph() -> tuple:
@@ -148,13 +159,14 @@ def build_graph() -> tuple:
     workflow.add_node("marketing_node", lambda state: marketing_node(state, bus))
     workflow.add_node("qa_node", lambda state: qa_node(state, bus))
     workflow.add_node("ceo_review_node", lambda state: ceo_review_node(state, bus))
+    workflow.add_node("ceo_final_summary", lambda state: ceo_final_summary_node(state, bus))
 
     workflow.add_edge(START, "ceo_decompose")
     workflow.add_edge("ceo_decompose", "product_node")
 
-    workflow.add_conditional_edges("product_node", _fan_out_after_product)
+    workflow.add_edge("product_node", "engineer_node")
 
-    workflow.add_edge("engineer_node", "qa_node")
+    workflow.add_edge("engineer_node", "marketing_node")
     workflow.add_edge("marketing_node", "qa_node")
     workflow.add_edge("qa_node", "ceo_review_node")
 
@@ -162,10 +174,11 @@ def build_graph() -> tuple:
         "ceo_review_node",
         _next_step_after_ceo_review,
         {
-            "end": END,
+            "ceo_final_summary": "ceo_final_summary",
             "engineer_node": "engineer_node",
             "marketing_node": "marketing_node",
         },
     )
+    workflow.add_edge("ceo_final_summary", END)
 
     return workflow.compile(), bus

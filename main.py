@@ -29,6 +29,9 @@ def run_system() -> tuple:
 
 
 if __name__ == "__main__":
+    import sys, io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+
     final_state, bus = run_system()
     pprint(final_state)
     print("\n=== FULL MESSAGE HISTORY ===")

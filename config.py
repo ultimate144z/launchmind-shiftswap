@@ -18,10 +18,11 @@ class Config:
     github_token: str
     github_repo: str
     slack_bot_token: str
-    sendgrid_api_key: str
+    brevo_api_key: str
     test_email: str
     verified_sender_email: str
     openai_model: str
+    slack_channel: str
 
 
 def _get_env(name: str) -> str:
@@ -36,7 +37,7 @@ def validate_config() -> Config:
         "GITHUB_TOKEN",
         "GITHUB_REPO",
         "SLACK_BOT_TOKEN",
-        "SENDGRID_API_KEY",
+        "BREVO_API_KEY",
         "TEST_EMAIL",
         "VERIFIED_SENDER_EMAIL",
     ]
@@ -54,8 +55,9 @@ def validate_config() -> Config:
         github_token=_get_env("GITHUB_TOKEN"),
         github_repo=_get_env("GITHUB_REPO"),
         slack_bot_token=_get_env("SLACK_BOT_TOKEN"),
-        sendgrid_api_key=_get_env("SENDGRID_API_KEY"),
+        brevo_api_key=_get_env("BREVO_API_KEY"),
         test_email=_get_env("TEST_EMAIL"),
         verified_sender_email=_get_env("VERIFIED_SENDER_EMAIL"),
         openai_model=_get_env("OPENAI_MODEL") or "gpt-4o-mini",
+        slack_channel=_get_env("SLACK_CHANNEL") or "launches",
     )
